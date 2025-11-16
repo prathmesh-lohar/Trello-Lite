@@ -40,12 +40,14 @@
 - Auth flow with login, protected routes, and logout
 
 ## Screenshots
-- Dashboard
-  - `/screenshot/dashboard.png`
-- Project Board
-  - `/screenshot/project-board.png`
 - Login
-  - `/screenshot/login.png`
+  - ![Login](https://raw.githubusercontent.com/prathmesh-lohar/Trello-Lite/main/screenshot/login.PNG)
+- Project Dashboard
+  - ![Dashboard](https://raw.githubusercontent.com/prathmesh-lohar/Trello-Lite/main/screenshot/Dashboard.PNG)
+- Create Project
+  - ![Create Project](https://raw.githubusercontent.com/prathmesh-lohar/Trello-Lite/main/screenshot/createproject.PNG)
+- Task Board
+  - ![Task Board](https://raw.githubusercontent.com/prathmesh-lohar/Trello-Lite/main/screenshot/taskboard.PNG)
+- Create Task
+  - ![Create Task](https://raw.githubusercontent.com/prathmesh-lohar/Trello-Lite/main/screenshot/new%20task.PNG)
 
-Place your screenshots in the `/screenshot/` folder at the repository root and reference them like:
-- `![Dashboard](/screenshot/dashboard.png)`
