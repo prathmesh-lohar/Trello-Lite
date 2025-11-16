@@ -86,6 +86,18 @@ const authMe = async (req, res) => {
   }
 };
 
-module.exports = { register, login, authMe };
+
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, '_id name email avatar').lean();
+    res.json(users);
+  } catch (error) {
+    console.error("GetAllUsers Error:", error);
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+};
+
+
+module.exports = { register, login, authMe, getAllUsers };
 
 

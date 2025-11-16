@@ -3,17 +3,22 @@ const Project = require("../models/Project");
 //  Create a new project
 const createProject = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, members } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: "Project name is required" });
     }
 
+    
+    const projectMembers = Array.isArray(members) && members.length > 0
+      ? members
+      : [{ userId: req.user._id, role: "admin" }];
+
     const project = await Project.create({
       name,
       description,
       owner: req.user._id,
-      members: [{ userId: req.user._id, role: "admin" }],
+      members: projectMembers, 
     });
 
     res.status(201).json({ message: "Project created successfully", project });
@@ -22,6 +27,7 @@ const createProject = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 //  Get all projects where the user is owner or member
 const getProjects = async (req, res) => {
