@@ -7,17 +7,36 @@ import { useProjects } from '@/src/context/ProjectContext';
 import { useAuth } from '@/src/context/AuthContext';
 import ProtectedRoute from '@/src/routes/ProtectedRoute';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import type { DropResult } from '@hello-pangea/dnd';
 import { Search, Filter, X } from 'lucide-react';
 
-const TaskCard = ({ task, index }) => {
+type UserRef = { _id: string; name: string; email?: string };
+type Member = { userId: UserRef | string; role: string };
+type TaskItem = {
+    _id: string;
+    title: string;
+    description: string;
+    assignee: UserRef | string | null;
+    status: 'todo' | 'in_progress' | 'done';
+    dueDate?: string;
+    order?: number;
+    createdBy?: string;
+};
+
+const TaskCard = ({ task, index }: { task: TaskItem; index: number }) => {
     const { editTask, removeTask } = useTasks();
     const { currentProject } = useProjects();
     const { user } = useAuth();
+    const ownerId = currentProject ? (typeof (currentProject as any).owner === 'object' ? (currentProject as any).owner?._id : (currentProject as any).owner) : undefined;
     const canEdit = !!user && (
         task.createdBy === user._id ||
-        (currentProject && (currentProject.owner === user._id || (currentProject.members || []).some(m => m.userId._id === user._id && m.role === 'admin')))
+        (currentProject && (
+            ownerId === user._id || (currentProject.members || []).some((m: Member) => (
+                (typeof m.userId === 'object' ? (m.userId as UserRef)._id : (m.userId as string)) === user._id && m.role === 'admin'
+            ))
+        ))
     );
-    const assigneeId = task.assignee ? task.assignee._id : '';
+    const assigneeId = task.assignee ? (typeof task.assignee === 'object' ? (task.assignee as UserRef)._id : (task.assignee as string)) : '';
     const handleAssigneeChange = (e: any) => {
         const newId = e.target.value;
         editTask(task._id, { assignee: newId as any });
@@ -53,9 +72,13 @@ const TaskCard = ({ task, index }) => {
                             className="px-2 py-1 border border-gray-300 rounded"
                         >
                             <option value="">Unassigned</option>
-                            {currentProject && currentProject.members && currentProject.members.map(member => (
-                                <option key={member.userId._id} value={member.userId._id}>{member.userId.name}</option>
-                            ))}
+                            {currentProject && currentProject.members && currentProject.members.map((member: Member) => {
+                                const uid = typeof member.userId === 'object' ? (member.userId as UserRef)._id : (member.userId as string);
+                                const uname = typeof member.userId === 'object' ? (member.userId as UserRef).name : '';
+                                return (
+                                    <option key={uid} value={uid}>{uname}</option>
+                                );
+                            })}
                         </select>
                         <input
                             type="date"
@@ -94,7 +117,7 @@ const TaskCard = ({ task, index }) => {
     );
 };
 
-const TaskColumn = ({ title, tasks, droppableId }) => (
+const TaskColumn = ({ title, tasks, droppableId }: { title: string; tasks: TaskItem[]; droppableId: string }) => (
   <div className="bg-gray-100 p-4 rounded-lg w-full max-w-[550px]">
     <h3 className="font-bold mb-4">{title}</h3>
     <Droppable droppableId={droppableId}>
@@ -119,14 +142,14 @@ import { Plus } from 'lucide-react';
 
 // ... existing code ...
 
-const CreateTaskModal = ({ isOpen, onClose, onCreate, members }) => {
+const CreateTaskModal = ({ isOpen, onClose, onCreate, members }: { isOpen: boolean; onClose: () => void; onCreate: (data: { title: string; description: string; status: 'todo'; dueDate: string; assignee: string }) => void; members: Member[] }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [assignee, setAssignee] = useState("");
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onCreate({ title, description, status: 'todo', dueDate, assignee });
         onClose();
@@ -169,11 +192,13 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, members }) => {
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                         >
                             <option value="">Unassigned</option>
-                            {members && members.map(member => (
-                                <option key={member.userId._id} value={member.userId._id}>
-                                    {member.userId.name}
-                                </option>
-                            ))}
+                            {members && members.map((member: Member) => {
+                                const uid = typeof member.userId === 'object' ? (member.userId as UserRef)._id : (member.userId as string);
+                                const uname = typeof member.userId === 'object' ? (member.userId as UserRef).name : '';
+                                return (
+                                    <option key={uid} value={uid}>{uname}</option>
+                                );
+                            })}
                         </select>
                     </div>
                     <div className="mb-6">
@@ -263,11 +288,11 @@ export default function ProjectPage() {
         }
     }, [projectError]);
 
-    const handleCreateTask = async (taskData) => {
+    const handleCreateTask = async (taskData: { title: string; description: string; status: 'todo'; dueDate: string; assignee: string }) => {
         await createTask(projectId as string, taskData);
     };
 
-    const onDragEnd = (result) => {
+    const onDragEnd = (result: DropResult) => {
         const { destination, source, draggableId } = result;
 
         if (!destination) return;
@@ -294,13 +319,17 @@ export default function ProjectPage() {
     const isAdmin = Boolean(
         currentProject && user && (
             ownerId === user._id ||
-            (currentProject.members || []).some(m => m.userId._id === user._id && m.role === 'admin')
+            (currentProject.members || []).some((m: Member) => (
+                (typeof m.userId === 'object' ? (m.userId as UserRef)._id : (m.userId as string)) === user._id && m.role === 'admin'
+            ))
         )
     );
     const isMember = Boolean(
         currentProject && user && (
             ownerId === user._id ||
-            (currentProject.members || []).some(m => m.userId._id === user._id)
+            (currentProject.members || []).some((m: Member) => (
+                (typeof m.userId === 'object' ? (m.userId as UserRef)._id : (m.userId as string)) === user._id
+            ))
         )
     );
 
@@ -379,19 +408,23 @@ export default function ProjectPage() {
                         <div className="mt-4">
                             <h3 className="font-semibold mb-2">Members</h3>
                             <div className="flex flex-wrap gap-2">
-                                {currentProject.members && currentProject.members.map((m) => (
-                                    <div key={m.userId._id} className="flex items-center gap-2 px-3 py-2 border rounded">
-                                        <span className="text-sm">{m.userId.name} ({m.role})</span>
-                                        {isAdmin && m.userId._id !== user?._id && (
-                                            <button
-                                                onClick={() => handleRemoveMember(m.userId._id)}
-                                                className="text-red-600 text-xs"
-                                            >
-                                                Remove
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
+                                {currentProject.members && currentProject.members.map((m: Member) => {
+                                    const uid = typeof m.userId === 'object' ? (m.userId as UserRef)._id : (m.userId as string);
+                                    const uname = typeof m.userId === 'object' ? (m.userId as UserRef).name : '';
+                                    return (
+                                        <div key={uid} className="flex items-center gap-2 px-3 py-2 border rounded">
+                                            <span className="text-sm">{uname} ({m.role})</span>
+                                            {isAdmin && uid !== user?._id && (
+                                                <button
+                                                    onClick={() => handleRemoveMember(uid)}
+                                                    className="text-red-600 text-xs"
+                                                >
+                                                    Remove
+                                                </button>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
@@ -482,11 +515,13 @@ export default function ProjectPage() {
                                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white"
                             >
                                 <option value="">All Assignees</option>
-                                {currentProject && currentProject.members && currentProject.members.map(member => (
-                                    <option key={member.userId._id} value={member.userId._id}>
-                                        {member.userId.name}
-                                    </option>
-                                ))}
+                                {currentProject && currentProject.members && currentProject.members.map((member: Member) => {
+                                    const uid = typeof member.userId === 'object' ? (member.userId as UserRef)._id : (member.userId as string);
+                                    const uname = typeof member.userId === 'object' ? (member.userId as UserRef).name : '';
+                                    return (
+                                        <option key={uid} value={uid}>{uname}</option>
+                                    );
+                                })}
                             </select>
                         </div>
 

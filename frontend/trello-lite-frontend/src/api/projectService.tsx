@@ -8,7 +8,7 @@ import { request } from "@/src/api/client";
  * @returns {Promise<Array<Object>>} A promise that resolves to an array of projects.
  * @throws {Error} Throws an error if the API call fails.
  */
-export const getProjects = async (token) => {
+export const getProjects = async (token: string) => {
     if (!token) {
         throw new Error("Authentication token is required to fetch projects.");
     }
@@ -55,7 +55,7 @@ export const getProjects = async (token) => {
  * @returns {Promise<Object>} A promise that resolves to the newly created project object.
  * @throws {Error} Throws an error if the API call fails.
  */
-export const addProject = async (projectData, token) => {
+export const addProject = async (projectData: any, token: string) => {
     if (!token) {
         throw new Error("Authentication token is required to create a project.");
     }
@@ -86,7 +86,7 @@ export const addProject = async (projectData, token) => {
  * @returns {Promise<Object>} A promise that resolves to the project object.
  * @throws {Error} Throws an error if the API call fails.
  */
-export const getProjectById = async (projectId, token) => {
+export const getProjectById = async (projectId: string, token: string) => {
     if (!token) {
         throw new Error("Authentication token is required to fetch a project.");
     }

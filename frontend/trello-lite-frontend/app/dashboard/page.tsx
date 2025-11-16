@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+
 import Link from "next/link";
 import ProtectedRoute from "@/src/routes/ProtectedRoute";
 import { useAuth } from "@/src/context/AuthContext";
@@ -8,9 +9,10 @@ import { useRouter } from "next/navigation";
 import { useProjects } from "@/src/context/ProjectContext";
 import { Search, Plus, Folder, CheckSquare, Users, BarChart2, Settings, MoreVertical } from "lucide-react";
 import { ThemeSwitcher } from "@/src/components/ThemeSwitcher";
+import type { LucideIcon } from "lucide-react";
 
 // Helper Sidebar NavItem
-const NavItem = ({ icon: Icon, label, isActive }) => (
+const NavItem = ({ icon: Icon, label, isActive }: { icon: LucideIcon; label: string; isActive: boolean }) => (
     <div className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-colors ${
         isActive ? "bg-blue-100 text-blue-600 font-semibold" : "text-gray-600 hover:bg-gray-50"
     }`}>
@@ -19,7 +21,10 @@ const NavItem = ({ icon: Icon, label, isActive }) => (
     </div>
 );
 
-const ProjectCard = ({ project, due, progress }) => {
+type UIProjectMember = { _id?: string; userId: { _id: string; name: string; avatar?: string } | string; role: string };
+type UIProject = { _id: string; name: string; description: string; owner?: { name?: string } | string; members?: UIProjectMember[] };
+
+const ProjectCard = ({ project, progress }: { project: UIProject; progress: number }) => {
     // Extract members array from project
     const members = project.members || [];
 
@@ -31,21 +36,21 @@ const ProjectCard = ({ project, due, progress }) => {
                     <MoreVertical className="w-5 h-5 text-gray-400" />
                 </div>
                 <p className="text-sm text-gray-500 mb-4 flex-grow">{project.description}</p>
-                <p className="text-xs text-gray-400 mb-3">Owner: {project.owner?.name}</p>
+                <p className="text-xs text-gray-400 mb-3">Owner: {typeof project.owner === 'object' ? (project.owner as { name?: string }).name : (project.owner as string)}</p>
 
                 <div className="flex items-center mb-3">
-                    {members.map((member) => {
-                        // If user avatar URL is available, use it, else fallback
-                        const avatarUrl = member.userId.avatar
-                            ? member.userId.avatar
-                            : `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(member.userId.name)}`;
+                    {members.map((member: UIProjectMember) => {
+                        const uname = typeof member.userId === 'object' ? (member.userId as { name: string }).name : '';
+                        const avatarUrl = (typeof member.userId === 'object' && (member.userId as { avatar?: string }).avatar)
+                            ? (member.userId as { avatar?: string }).avatar!
+                            : `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(uname || 'U')}`;
 
                         return (
                             <img
                                 key={member._id}
                                 src={avatarUrl}
-                                alt={`Member ${member.userId.name}`}
-                                title={`${member.userId.name} (${member.role})`}
+                                alt={`Member ${uname}`}
+                                title={`${uname} (${member.role})`}
                                 className="w-8 h-8 rounded-full border-2 border-white -mr-2"
                                 style={{ zIndex: members.length }}
                             />
@@ -53,7 +58,7 @@ const ProjectCard = ({ project, due, progress }) => {
                     })}
                 </div>
 
-                <div className="flex items-center space-x-2 mt-auto">
+                        <div className="flex items-center space-x-2 mt-auto">
                     <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                             className="bg-green-500 h-2 rounded-full"
@@ -77,11 +82,11 @@ const ProjectCard = ({ project, due, progress }) => {
 
 
 // CreateProjectModal with dynamic users selection
-const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [allUsers, setAllUsers] = useState([]);
-    const [selectedMembers, setSelectedMembers] = useState([]); // array of { userId, role }
+const CreateProjectModal = ({ isOpen, onClose, onCreate }: { isOpen: boolean; onClose: () => void; onCreate: (payload: { name: string; description: string; members: { userId: string; role: "admin" | "member" }[] }) => void }) => {
+    const [name, setName] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [allUsers, setAllUsers] = useState<{ _id: string; name: string; email: string }[]>([]);
+    const [selectedMembers, setSelectedMembers] = useState<{ userId: string; role: "admin" | "member" }[]>([]);
 
     useEffect(() => {
         if (isOpen) {
@@ -92,7 +97,7 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
         }
     }, [isOpen]);
 
-    const toggleUserSelection = (userId) => {
+    const toggleUserSelection = (userId: string) => {
         if (selectedMembers.find((m) => m.userId === userId)) {
             setSelectedMembers(selectedMembers.filter((m) => m.userId !== userId));
         } else {
@@ -100,14 +105,14 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
         }
     };
 
-    const updateUserRole = (userId, role) => {
+    const updateUserRole = (userId: string, role: "admin" | "member") => {
         const updated = selectedMembers.map((m) =>
             m.userId === userId ? { ...m, role } : m
         );
         setSelectedMembers(updated);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onCreate({ name, description, members: selectedMembers });
         setName("");
@@ -161,7 +166,7 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
                                         {member && (
                                             <select
                                                 value={member.role}
-                                                onChange={(e) => updateUserRole(user._id, e.target.value)}
+                                                onChange={(e) => updateUserRole(user._id, e.target.value as "admin" | "member")}
                                                 className="border border-gray-300 rounded px-2 py-1"
                                             >
                                                 <option value="admin">Admin</option>
@@ -200,9 +205,15 @@ export default function DashboardPage() {
     const { logout } = useAuth();
     const router = useRouter();
 
+    const [sidebarUser, setSidebarUser] = useState({
+        name: "Alex Hartman",
+        email: "alex@teamflow.com",
+        avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?crop=entropy&cs=tinysrgb&fit=crop&h=100&w=100",
+    });
+
     const currentUserId = "6733c5c93b9f9b4a2a1d4b91"; // your logged-in user id
 
-    const handleCreateProject = async ({ name, description, members }) => {
+    const handleCreateProject = async ({ name, description, members }: { name: string; description: string; members: { userId: string; role: "admin" | "member" }[] }) => {
         const payload = {
             name,
             description,
@@ -217,20 +228,15 @@ export default function DashboardPage() {
         const storedUser = localStorage.getItem('auth-user');
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
-            // If avatar is missing, assign a generated avatar URL (e.g. from dicebear)
             if (!parsedUser.avatar) {
                 parsedUser.avatar = `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(parsedUser.name)}`;
             }
-            setUser(parsedUser);
+            setSidebarUser(parsedUser);
         }
     }, []);
 
 
-    const [user, setUser] = useState({
-        name: "Alex Hartman",
-        email: "alex@teamflow.com",
-        avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?crop=entropy&cs=tinysrgb&fit=crop&h=100&w=100",
-    });
+    
 
     return (
         <ProtectedRoute>
@@ -251,10 +257,10 @@ export default function DashboardPage() {
                     <div>
                         <NavItem icon={Settings} label="Settings" isActive={false} />
                         <div className="flex items-center space-x-3 mt-4 p-2">
-                            <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full" />
+                            <img src={sidebarUser.avatar} alt={sidebarUser.name} className="w-10 h-10 rounded-full" />
                             <div>
-                                <div className="text-sm font-semibold text-gray-800">{user.name}</div>
-                                <div className="text-xs text-gray-500">{user.email}</div>
+                                <div className="text-sm font-semibold text-gray-800">{sidebarUser.name}</div>
+                                <div className="text-xs text-gray-500">{sidebarUser.email}</div>
                             </div>
                         </div>
                     </div>
@@ -306,9 +312,7 @@ export default function DashboardPage() {
                             <ProjectCard
                                 key={project._id}
                                 project={project}
-                                due={project.owner.name}
                                 progress={10}
-                                team={[]}
                             />
                         ))}
                     </section>

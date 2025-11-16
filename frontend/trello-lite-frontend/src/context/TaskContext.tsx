@@ -19,7 +19,7 @@ interface Task {
     );
     status: 'todo' | 'in_progress' | 'done';
     dueDate: string;
-    order: number;
+    order?: number;
     createdAt?: string;
     createdBy?: string;
 }
@@ -28,6 +28,7 @@ interface TaskContextType {
     tasks: Task[];
     filteredTasks: Task[];
     loading: boolean;
+    refreshing: boolean;
     error: string | null;
     searchQuery: string;
     statusFilter: string;

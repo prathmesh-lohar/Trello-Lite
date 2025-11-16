@@ -1,5 +1,7 @@
 # Trello-Lite
 
+**Live Preview**: `https://trello-lite-six.vercel.app/dashboard`
+
 ## Prerequisites
 - Node.js 18+ and npm
 - MongoDB running locally or a cloud MongoDB URI
@@ -26,8 +28,7 @@
 - If the frontend switches to a different port (e.g., 3001), use that URL in the browser.
 - Ensure the backend is reachable at `http://localhost:1000`; update `src/api/client.ts` if you change the backend port.
 
-## Live Preview
-- `https://trello-lite-six.vercel.app/dashboard`
+ 
 
 ## Features
 - Project dashboard with owner and members overview
@@ -40,11 +41,11 @@
 
 ## Screenshots
 - Dashboard
-  - `frontend/trello-lite-frontend/public/screenshots/dashboard.png`
+  - `/screenshot/dashboard.png`
 - Project Board
-  - `frontend/trello-lite-frontend/public/screenshots/project-board.png`
+  - `/screenshot/project-board.png`
 - Login
-  - `frontend/trello-lite-frontend/public/screenshots/login.png`
+  - `/screenshot/login.png`
 
-Place your screenshots in the `frontend/trello-lite-frontend/public/screenshots/` folder and reference them here, for example:
-- `![Dashboard](./frontend/trello-lite-frontend/public/screenshots/dashboard.png)`
+Place your screenshots in the `/screenshot/` folder at the repository root and reference them like:
+- `![Dashboard](/screenshot/dashboard.png)`

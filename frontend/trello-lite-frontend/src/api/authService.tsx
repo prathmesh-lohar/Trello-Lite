@@ -1,4 +1,4 @@
-export const loginUser = async (email, password) => {
+export const loginUser = async (email: string, password: string) => {
     // Mock authentication for testing since backend is not available
     if (email === "test@example.com" && password === "password") {
         return {
