@@ -151,6 +151,16 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, members }) => {
                         />
                     </div>
                     <div className="mb-4">
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea
+                            id="description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            rows={4}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
+                    <div className="mb-4">
                         <label htmlFor="assignee" className="block text-sm font-medium text-gray-700 mb-1">Assign To</label>
                         <select
                             id="assignee"
@@ -224,7 +234,7 @@ export default function ProjectPage() {
         clearFilters
     } = useTasks();
     const { currentProject, fetchProjectById, addMember, removeMember, error: projectError, updateProject, deleteProject } = useProjects();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inviteValue, setInviteValue] = useState("");
     const [isEditProjectOpen, setIsEditProjectOpen] = useState(false);
@@ -413,14 +423,25 @@ export default function ProjectPage() {
                 )}
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold">Task Board</h1>
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        disabled={!isMember}
-                        className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <Plus className="w-5 h-5 mr-1" />
-                        Create New Task
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            disabled={!isMember}
+                            className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <Plus className="w-5 h-5 mr-1" />
+                            Create New Task
+                        </button>
+                        <button
+                            onClick={() => {
+                                logout();
+                                router.replace('/login');
+                            }}
+                            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
 
                 {/* Search and Filter Bar */}

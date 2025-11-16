@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ProtectedRoute from "@/src/routes/ProtectedRoute";
+import { useAuth } from "@/src/context/AuthContext";
+import { useRouter } from "next/navigation";
 import { useProjects } from "@/src/context/ProjectContext";
 import { Search, Plus, Folder, CheckSquare, Users, BarChart2, Settings, MoreVertical } from "lucide-react";
 import { ThemeSwitcher } from "@/src/components/ThemeSwitcher";
@@ -195,6 +197,8 @@ const CreateProjectModal = ({ isOpen, onClose, onCreate }) => {
 export default function DashboardPage() {
     const { projects, loading, error, createProject } = useProjects();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { logout } = useAuth();
+    const router = useRouter();
 
     const currentUserId = "6733c5c93b9f9b4a2a1d4b91"; // your logged-in user id
 
@@ -275,6 +279,15 @@ export default function DashboardPage() {
                             >
                                 <Plus className="w-5 h-5 mr-1" />
                                 Create New Project
+                            </button>
+                            <button
+                                onClick={() => {
+                                    logout();
+                                    router.replace("/login");
+                                }}
+                                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+                            >
+                                Logout
                             </button>
                         </div>
                     </header>
