@@ -95,20 +95,25 @@ const TaskCard = ({ task, index }) => {
 };
 
 const TaskColumn = ({ title, tasks, droppableId }) => (
-    <div className="bg-gray-100 p-4 rounded-lg w-80">
-        <h3 className="font-bold mb-4">{title}</h3>
-        <Droppable droppableId={droppableId}>
-            {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps} className="min-h-[400px]">
-                    {tasks.map((task, index) => (
-                        <TaskCard key={task._id} task={task} index={index} />
-                    ))}
-                    {provided.placeholder}
-                </div>
-            )}
-        </Droppable>
-    </div>
+  <div className="bg-gray-100 p-4 rounded-lg w-full max-w-[550px]">
+    <h3 className="font-bold mb-4">{title}</h3>
+    <Droppable droppableId={droppableId}>
+      {(provided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          className="min-h-[400px]"
+        >
+          {tasks.map((task, index) => (
+            <TaskCard key={task._id} task={task} index={index} />
+          ))}
+          {provided.placeholder}
+        </div>
+      )}
+    </Droppable>
+  </div>
 );
+
 
 import { Plus } from 'lucide-react';
 
@@ -345,7 +350,7 @@ export default function ProjectPage() {
                                             Delete Project
                                         </button>
                                     )}
-                                    <input
+                                    {/* <input
                                         type="text"
                                         value={inviteValue}
                                         onChange={(e) => setInviteValue(e.target.value)}
@@ -357,7 +362,7 @@ export default function ProjectPage() {
                                         className="px-3 py-2 bg-blue-600 text-white rounded-lg"
                                     >
                                         Add
-                                    </button>
+                                    </button> */}
                                 </div>
                             )}
                         </div>
