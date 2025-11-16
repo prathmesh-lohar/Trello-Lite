@@ -9,7 +9,9 @@ const taskApis = require("./controllers/Task");
 const cors = require("cors");
 
 app.use(cors({
-  origin: "http://localhost:3000",
+  // origin: "http://localhost:3000",
+  origin: "https://trello-lite-six.vercel.app",
+
   credentials: true,
 }));
 
