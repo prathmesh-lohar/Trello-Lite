@@ -1,0 +1,220 @@
+{
+	"info": {
+		"_postman_id": "7701d68b-784a-43ed-af04-0ffab9d5cb56",
+		"name": "tasks",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24901817"
+	},
+	"item": [
+		{
+			"name": "Create task under project",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MTQ5ZjgxZWVhZGZmZTYxODM4MWY1NiIsImlhdCI6MTc2MzA0NzA5NiwiZXhwIjoxNzYzNjUxODk2fQ.dJN1vxcPfufBm1yLvbvDXJ49zla5HTL-SxEbVYJT0F8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Design Login Page\",\r\n  \"description\": \"Create a responsive login page using Figma\",\r\n  \"assignee\": \"69149f81eeadffe618381f56\", \r\n  \"status\": \"todo\",\r\n  \"dueDate\": \"2025-11-20T00:00:00.000Z\",\r\n  \"order\": 1\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:1000/api/v1/tasks/:projectId/tasks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1000",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						":projectId",
+						"tasks"
+					],
+					"variable": [
+						{
+							"key": "projectId",
+							"value": "6915fd08c856f2e8f06a44e2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all tasks of a project",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MTQ5ZjgxZWVhZGZmZTYxODM4MWY1NiIsImlhdCI6MTc2MzA0NzA5NiwiZXhwIjoxNzYzNjUxODk2fQ.dJN1vxcPfufBm1yLvbvDXJ49zla5HTL-SxEbVYJT0F8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:1000/api/v1/tasks/:projectId/tasks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1000",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						":projectId",
+						"tasks"
+					],
+					"variable": [
+						{
+							"key": "projectId",
+							"value": "6915fd08c856f2e8f06a44e2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get sinle task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MTQ5ZjgxZWVhZGZmZTYxODM4MWY1NiIsImlhdCI6MTc2MzA0NzA5NiwiZXhwIjoxNzYzNjUxODk2fQ.dJN1vxcPfufBm1yLvbvDXJ49zla5HTL-SxEbVYJT0F8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:1000/api/v1/tasks/:id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1000",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "691608a28e566b4ea5a66319"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MTQ5ZjgxZWVhZGZmZTYxODM4MWY1NiIsImlhdCI6MTc2MzA0NzA5NiwiZXhwIjoxNzYzNjUxODk2fQ.dJN1vxcPfufBm1yLvbvDXJ49zla5HTL-SxEbVYJT0F8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \r\n    \"title\": \"Design Login Page\",\r\n    \"description\": \"Create a responsive login page using Figma/ui\",\r\n    \"assignee\": {\r\n        \"_id\": \"69149f81eeadffe618381f56\",\r\n        \"name\": \"Prathmesh Lohar\",\r\n        \"email\": \"loharprathmesh123@gmail.com\"\r\n    },\r\n    \"status\": \"todo\",\r\n    \"dueDate\": \"2025-11-20T00:00:00.000Z\",\r\n    \"projectId\": \"6915fd08c856f2e8f06a44e2\",\r\n    \"createdBy\": \"69149f81eeadffe618381f56\",\r\n    \"order\": 1,\r\n    \"createdAt\": \"2025-11-13T16:34:42.982Z\",\r\n    \"updatedAt\": \"2025-11-13T16:34:42.982Z\",\r\n    \"__v\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:1000/api/v1/tasks/:id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1000",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "691608a28e566b4ea5a66319"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MTQ5ZjgxZWVhZGZmZTYxODM4MWY1NiIsImlhdCI6MTc2MzA0NzA5NiwiZXhwIjoxNzYzNjUxODk2fQ.dJN1vxcPfufBm1yLvbvDXJ49zla5HTL-SxEbVYJT0F8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:1000/api/v1/tasks/:id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1000",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "691608a28e566b4ea5a66319"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
