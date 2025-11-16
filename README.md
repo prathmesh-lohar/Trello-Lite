@@ -48,6 +48,4 @@
   - ![Create Project](https://raw.githubusercontent.com/prathmesh-lohar/Trello-Lite/main/screenshot/createproject.PNG)
 - Task Board
   - ![Task Board](https://raw.githubusercontent.com/prathmesh-lohar/Trello-Lite/main/screenshot/taskboard.PNG)
-- Create Task
-  - ![Create Task](https://raw.githubusercontent.com/prathmesh-lohar/Trello-Lite/main/screenshot/new%20task.PNG)
 
